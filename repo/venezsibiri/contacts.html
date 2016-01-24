@@ -1,0 +1,194 @@
+{literal}
+<style>
+ #content{width: 840px;}
+</style>
+{/literal}
+<div class="content">
+ <img src="/templates/images/titles/{$doc.id}.gif" alt="">
+</div>
+<div class="content">
+
+{literal}
+<script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+{/literal}
+	{if $one}
+		<div class="shop_block">
+				<p style="font-size: 200%;">{$one.0.city}</p>
+				{foreach from=$one key=k item=shop}
+					<div id="shop_{$k}">
+						<a style="font-weight: bold; border-bottom: 1px dashed;" class="dealerClickable" data-coordinates="{$shop.xy}">{$shop.name}</a>
+						<p>{$shop.address}</p>
+						<p>{$shop.phone}</p>
+						<p>{$shop.description}</p>
+					</div>
+						<br/>
+				{/foreach}
+		</div>
+		<div class="corp-shops-map">
+			<div class="map-wrapper">
+				<div id="map"></div>
+			</div>
+		</div>
+		<div class="clear"></div>
+	{else}
+	<div class="sel_par">
+		<div class="selector"><span class="unclickable" style="font-weight: bold;">МАГАЗИНЫ</span> <span class="splitter">|</span> <span class="clickable" style="font-weight: normal;">ДИЛЕРЫ</span><br/>Выберите город присутствия</div>
+		<br/>
+		<div class="sdb">
+			<div class="shop_block visible" style="width 400px;">
+				{foreach from=$shops key=k item=city}
+					<a href="/contacts/{$city.0.city_eng}">{$k}</a>
+					<!--<div class="cityshops unvisible">
+						{foreach from=$city item=mag}
+							<a href="/contacts/">{$mag.name} {$mag.address}</a>
+							<br/>
+						{/foreach}
+					</div>-->
+					<br/>
+				{/foreach}
+			</div>
+			<div class="dealer_block unvisible">
+				{foreach from=$dealers key=k item=city}
+					<b><a href="javascript:void(0);" onclick="show('deal_{$k}');">{$k}</a></b>
+					<div id="deal_{$k}" class="cityshops" style="display: none;">
+						{foreach from=$city item=mag}
+							<p>{$mag.name} {$mag.address} {$mag.phone}<br/>{$mag.description}</p>
+						{/foreach}
+					</div>
+					<br/>
+				{/foreach}
+			</div>
+		</div>
+	</div>
+	{/if}
+	{literal}
+	<script type="text/javascript">
+		ymaps.ready(init);
+		var myMap, coords;
+		
+		function moveCenter(coordinates)
+		{
+			var coord = coordinates.split(',')
+			myMap.setCenter(coord);
+			myMap.setZoom(14);
+		}
+					
+		function init()
+		{ 
+			ymaps.geocode
+			(
+				{/literal}'{$one.0.city}'{literal}, 
+				{
+					results: 1 // Если нужен только один результат, экономим трафик пользователей
+				}
+			).then(function (res)
+						{
+							// Выбираем первый результат геокодирования.
+							var firstGeoObject = res.geoObjects.get(0),
+							// Координаты геообъекта.
+							coords = firstGeoObject.geometry.getCoordinates();
+							myMap = new ymaps.Map("map", {
+								center: coords,
+								zoom: 11
+							});
+							
+							
+							
+							{/literal}{foreach from=$one key=k item=shop}{literal}
+							
+							shop{/literal}{$k}{literal} = new ymaps.Placemark({/literal}[{$shop.xy}]{literal}, { 
+								hintContent: '<b>'+{/literal}'{$shop.name}'{literal}+'</b><br/>'+{/literal}'{$shop.address}'{literal}, 
+								balloonContent: '<div class="dealerBoxx"><div class="iconBox"><p class="dealerName">'+{/literal}'{$shop.name}'{literal}+'</p></div><div class="dealerInfo"><div class="placeInfo"><p>'+{/literal}'{$shop.address}'{literal}+'</p></div><div class="phoneInfo"><p>'+{/literal}'{$shop.phone}'{literal}+'</p></div><div class="descInfo"><p>'+{/literal}'{$shop.description|escape:'quotes'}'{literal}+'</p></div></div></div>', 
+							});
+
+							myMap.geoObjects.add(shop{/literal}{$k}{literal});
+							
+							jQuery('#shop_{/literal}{$k}{literal}').mouseenter(function() {
+								/*myMap.geoObjects.each(function(c) {
+										c.options.set({
+											'iconOpacity': 0.4,
+											'zIndex': 0
+										});
+								});*/
+								shop{/literal}{$k}{literal}.options.set({
+																								'iconOpacity': 1,
+																								'zIndex': 1000
+																							});
+								
+							});
+
+							jQuery('#shop_{/literal}{$k}{literal}').mouseleave(function() {
+								myMap.geoObjects.each(function(c) {
+									c.options.set({
+										'iconOpacity': 0.4,
+										'zIndex': 0
+									});
+								});
+							});
+							
+							{/literal}{/foreach}{literal}
+							myMap.geoObjects.each(function(c) {
+										c.options.set({
+											'iconOpacity': 0.4,
+											'zIndex': 0
+										});
+								});
+							
+						}
+					);
+							
+		};
+		
+		/* прокрутка страницы с картой */
+		var scroll;
+		var mapBox = jQuery('.corp-shops-map');
+		mapBox.css('position', 'relative');
+		var topMap;
+		var map = jQuery('.map-wrapper');
+		var heightMap = map.height();
+		map.css('position', 'absolute');
+		map.css('top', 0);
+		var bottomMap = jQuery('#cat_h .title').offset().top;
+
+		jQuery(window).scroll(function() 
+		{
+			scroll = jQuery(this).scrollTop();
+			bottomMap = jQuery('#cat_h .title').offset().top;
+			topMap = mapBox.offset()['top'];
+
+			if (scroll > topMap) 
+			{
+				if (scroll < (bottomMap - heightMap - 100))
+					map.css('top', scroll - topMap);
+				else
+					map.css('top', bottomMap - topMap - heightMap - 100)
+			} 
+			else
+			{
+				map.css('top', 0);
+			}
+		});
+		/* центрирование на магазине */
+		jQuery(document).ready(function(){
+		/*setTimeout(function(){
+			yaCounter1011595.reachGoal('PerehodNaPoddomen');
+			jQuery('.dealerContainer').freetile();
+		}, 500);*/
+		jQuery('.dealerClickable').live('click', function(){
+			coord = jQuery(this).attr('data-coordinates');
+			moveCenter(coord);
+			/*jQuery('body').animate({'scrollTop': jQuery('#yandexMap').offset().top}, 500, 'swing', function(){
+				moveCenter(coord);
+			});*/
+		});
+	});
+	
+	</script>
+	{/literal}
+
+ <!--{$doc.texts.1}-->
+
+</div>
+{if $smarty.server.REQUEST_URI neq '/contacts'}
+<div style="text-align: right;"><a href="/contacts">Назад<a/></div>
+{/if}
