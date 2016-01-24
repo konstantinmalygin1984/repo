@@ -84,7 +84,6 @@ if( $arHelper['inProgress']=='TRUE' )
         {
             $arHelper['sStep'] = 'addCatStructs';
             file_put_contents($sImportLog, serialize($arHelper));
-            //LocalRedirect('/test/?comStep='.($_GET['comStep']+1));
         }
         else
         {
@@ -109,7 +108,6 @@ if( $arHelper['inProgress']=='TRUE' )
         {
             $arHelper['sStep'] = 'addCatalogs';
             file_put_contents($sImportLog, serialize($arHelper));
-            //LocalRedirect('/test/?comStep='.($_GET['comStep']+1));
         }
         else
         {
@@ -134,7 +132,6 @@ if( $arHelper['inProgress']=='TRUE' )
         {
             $arHelper['sStep'] = 'addOrders';
             file_put_contents($sImportLog, serialize($arHelper));
-            //LocalRedirect('/test/?comStep='.($_GET['comStep']+1));
         }
         else
         {
@@ -160,7 +157,6 @@ if( $arHelper['inProgress']=='TRUE' )
             $arHelper['sStep'] = 'addShedules';
             file_put_contents($sImportLog, serialize($arHelper));
             echo '<br/>component max_execution_time = '.ini_get('max_execution_time');
-            //LocalRedirect('/test/?comStep='.($_GET['comStep']+1));
         }
         else
         {
@@ -185,8 +181,6 @@ if( $arHelper['inProgress']=='TRUE' )
         {
             $arHelper['sStep'] = 'addMasterstats';
             file_put_contents($sImportLog, serialize($arHelper));
-            echo '<br/>component max_execution_time = '.ini_get('max_execution_time');
-            //LocalRedirect('/test/?comStep='.($_GET['comStep']+1));
         }
         else
         {

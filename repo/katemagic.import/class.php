@@ -10,16 +10,12 @@ class CImportKatemagic
     var $sDir;
     var $LAST_ERROR = '';
     var $step = "";
-    //var $sRelDir = "/upload/users_exchange/";
     var $sRelDir = "/upload/1c_catalog/unzip/";
     var $arProperties = Array();
     var $aHelp = array();
     var $PersonTypeID = 2;
     var $iMax_exec_time;
 
-    // \Bitrix\Main\Loader::IncludeModule("iblock");
-
-    //public function __construct($sXmlUsersFile, $sXmlCatalogFile, $sXmlOrdersFile, $sXmlSheduleFile, $sXmlMasterstatFile)
     public function __construct($sXmlDataFile)
     {
         $this->sDir = $_SERVER["DOCUMENT_ROOT"].$this->sRelDir;

@@ -8,5 +8,4 @@ $arComponentDescription = array(
 	"ICON" => "/images/menu_ext.gif",
 
 );
-
 ?>

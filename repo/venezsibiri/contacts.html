@@ -38,12 +38,6 @@
 			<div class="shop_block visible" style="width 400px;">
 				{foreach from=$shops key=k item=city}
 					<a href="/contacts/{$city.0.city_eng}">{$k}</a>
-					<!--<div class="cityshops unvisible">
-						{foreach from=$city item=mag}
-							<a href="/contacts/">{$mag.name} {$mag.address}</a>
-							<br/>
-						{/foreach}
-					</div>-->
 					<br/>
 				{/foreach}
 			</div>
